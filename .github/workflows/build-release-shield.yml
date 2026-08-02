@@ -1,0 +1,92 @@
+name: Build and Release UltraShield
+
+on:
+  push:
+    tags:
+      - 'shield-v*'    # Own prefix, separate from the Video/Audio Editor
+                        # tags in the sibling repo, and separate from any
+                        # other tag pattern in this repo.
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # The git tag is "shield-v1.0.0" (clear prefix against collisions with
+      # other tag patterns), but the release name and installer filename
+      # should just say "v1.0.0" - this strips the prefix once.
+      - name: Extract clean version from tag
+        shell: pwsh
+        run: |
+          $clean = "${{ github.ref_name }}" -replace '^shield-', ''
+          echo "CLEAN_VERSION=$clean" >> $env:GITHUB_ENV
+
+      - name: Restore NuGet packages
+        run: dotnet restore UltraShield\UltraShield.csproj
+
+      - name: Build (Release, self-contained)
+        run: |
+          dotnet publish UltraShield\UltraShield.csproj `
+            --configuration Release `
+            --runtime win-x64 `
+            --self-contained true `
+            --output ./publish `
+            -p:PublishSingleFile=false `
+            -p:IncludeNativeLibrariesForSelfExtract=true
+
+      # Inno Setup isn't preinstalled on the windows-latest runner, but
+      # Chocolatey (choco.exe) is - the standard way to install it.
+      - name: Install Inno Setup
+        run: choco install innosetup -y --no-progress
+
+      - name: Compile installer (Inno Setup)
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" `
+            "/DMyAppVersion=${{ env.CLEAN_VERSION }}" `
+            "/DMyAppSourceDir=${{ github.workspace }}\publish" `
+            installer\UltraShield.iss
+
+      - name: Create GitHub Release and upload
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "UltraShield ${{ env.CLEAN_VERSION }}"
+          body: |
+            ## UltraShield ${{ env.CLEAN_VERSION }}
+
+            **Download the installer below and run it.** Windows will ask
+            for administrator permission - that's normal and expected.
+
+            UltraShield is an accessible digital self-defense app:
+            - **Education** - real, current threat write-ups (fake job
+              offers, trojanized npm/PyPI packages, fake crypto platforms,
+              deepfake/fake IT workers, malicious extensions)
+            - **Scanner** - npm/PyPI package checks, single-file hash
+              checks, and a full recursive folder scan (on-demand, like a
+              Malwarebytes scan - not real-time protection), with local
+              caching and quarantine
+            - **Checklist** - security hygiene tracking, saved between runs
+
+            ### Accessibility
+            Built with native WPF controls throughout, full JAWS
+            compatibility, visible keyboard focus indicators, and live
+            announcements for scan progress and results.
+
+            ### System requirements
+            - Windows 10/11 (64-bit)
+            - No other dependencies - this app is self-contained
+
+            ---
+            *Built with GitHub Actions | [Documentation](https://github.com/demirajvazi10-max/UltraShield)*
+          files: installer/Output/UltraShieldSetup-*.exe
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -145,6 +145,20 @@ VirusTotal is enabled — that's expected, not a bug).
 - I couldn't compile it locally (no .NET SDK/Windows in this environment) —
   try a build in Visual Studio and let me know what (if anything) breaks
 
+## Building a release
+
+1. In Visual Studio: **Build > Rebuild** in the **Release** configuration
+   (not Debug — Debug is unoptimized and carries extra debug symbols).
+2. To build the installer locally: install [Inno Setup 6](https://jrsoftware.org/isinfo.php),
+   then compile `installer/UltraShield.iss` (adjust `MyAppSourceDir` at the
+   top of the file if your build output path differs).
+3. To publish an actual GitHub release: push a tag matching `shield-v*`
+   (e.g. `shield-v1.0.0`) — the GitHub Actions workflow in
+   `.github/workflows/build-release-shield.yml` builds, compiles the
+   installer, and creates the release automatically. A tag containing
+   `alpha` or `beta` (e.g. `shield-v1.0.0-beta`) is marked as a
+   pre-release automatically.
+
 ## Author
 
 Created by **Demir Ajvazi**, part of the Ultra suite of accessible software.
