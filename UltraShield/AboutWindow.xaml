@@ -1,0 +1,40 @@
+<Window x:Class="UltraShield.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="About UltraShield"
+        Height="360" Width="440"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="{StaticResource BrushSurface}"
+        AutomationProperties.Name="About UltraShield">
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+            <Viewbox Width="36" Height="36" Margin="0,0,12,0">
+                <Path Data="{StaticResource ShieldGeometry}" Fill="{StaticResource BrushAccent}" Stretch="Uniform"/>
+            </Viewbox>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="UltraShield" Style="{StaticResource DisplayTextStyle}" FontSize="22"/>
+                <TextBlock Text="Version 1.0" Style="{StaticResource CaptionTextStyle}"/>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1">
+            <TextBlock TextWrapping="Wrap" Margin="0,0,0,14"
+                       Text="Digital self-defense - education, package/file/folder scanning, and security hardening. On-demand, not real-time noise. Part of the Ultra suite of accessible software."/>
+            <TextBlock Text="Created by Demir Ajvazi" FontFamily="{StaticResource FontDisplay}" Margin="0,0,0,4"/>
+            <TextBlock Text="© 2026 Demir Ajvazi" Style="{StaticResource CaptionTextStyle}"/>
+        </StackPanel>
+
+        <Button Grid.Row="2" Content="Close" Click="CloseButton_Click"
+                HorizontalAlignment="Right" Margin="0,16,0,0"
+                AutomationProperties.Name="Close about dialog"
+                IsDefault="True" IsCancel="True"/>
+    </Grid>
+</Window>

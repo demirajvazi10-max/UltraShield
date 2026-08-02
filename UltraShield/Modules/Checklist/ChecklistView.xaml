@@ -1,0 +1,33 @@
+<UserControl x:Class="UltraShield.Modules.Checklist.ChecklistView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <DockPanel Margin="14">
+        <TextBlock DockPanel.Dock="Top" Text="Security hardening checklist"
+                   Style="{StaticResource SectionHeaderTextStyle}" Margin="0,0,0,14"/>
+
+        <Border DockPanel.Dock="Bottom" Background="{StaticResource BrushSurface}"
+                BorderBrush="{StaticResource BrushBorder}" BorderThickness="1"
+                CornerRadius="4" Padding="12" Margin="0,14,0,0">
+            <TextBlock Text="{Binding ProgressText}"
+                       FontFamily="{StaticResource FontDisplay}"
+                       AutomationProperties.Name="Checklist progress"
+                       AutomationProperties.LiveSetting="Polite"/>
+        </Border>
+
+        <!-- Native CheckBox items: each one exposes the standard
+             Toggle UIA pattern, so JAWS announces "checked/unchecked"
+             without any extra work. -->
+        <Border Background="{StaticResource BrushSurface}" BorderBrush="{StaticResource BrushBorder}"
+                BorderThickness="1" CornerRadius="4" Padding="16">
+            <ItemsControl ItemsSource="{Binding Items}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox Content="{Binding Title}"
+                                  IsChecked="{Binding IsDone}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+    </DockPanel>
+</UserControl>

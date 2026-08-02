@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>UltraShield</RootNamespace>
+    <AssemblyName>UltraShield</AssemblyName>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <Product>UltraShield</Product>
+    <Company>Demir Ajvazi</Company>
+    <Authors>Demir Ajvazi</Authors>
+    <Copyright>© 2026 Demir Ajvazi</Copyright>
+    <!-- Keep native WPF controls (no owner-drawn/custom-rendered controls) so
+         JAWS and other screen readers get full Automation/UIA support out of the box. -->
+  </PropertyGroup>
+
+</Project>

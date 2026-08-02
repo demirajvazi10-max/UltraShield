@@ -1,0 +1,35 @@
+<UserControl x:Class="UltraShield.Modules.Education.EducationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Margin="14">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Margin="0,0,14,0">
+            <TextBlock Text="Threat topics" Style="{StaticResource SectionHeaderTextStyle}"/>
+            <ListBox AutomationProperties.Name="Threat topics"
+                     ItemsSource="{Binding Topics}"
+                     SelectedItem="{Binding SelectedTopic}"
+                     DisplayMemberPath="Title"
+                     Background="{StaticResource BrushSurface}"
+                     BorderBrush="{StaticResource BrushBorder}"/>
+        </StackPanel>
+
+        <Border Grid.Column="1" Background="{StaticResource BrushSurface}"
+                BorderBrush="{StaticResource BrushBorder}" BorderThickness="1"
+                CornerRadius="4" Padding="18">
+            <ScrollViewer>
+                <StackPanel>
+                    <TextBlock Text="{Binding SelectedTopic.Title}" FontFamily="{StaticResource FontDisplay}"
+                               FontSize="16" Margin="0,0,0,10"/>
+                    <TextBlock Text="{Binding SelectedTopic.Body}"
+                               TextWrapping="Wrap"
+                               AutomationProperties.Name="Topic details"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>
