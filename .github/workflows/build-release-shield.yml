@@ -10,6 +10,12 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    # Without this, the default GITHUB_TOKEN is read-only in many repos
+    # (a GitHub-wide default that changed a while back), and
+    # softprops/action-gh-release fails with "Resource not accessible by
+    # integration" when it tries to create the release.
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
