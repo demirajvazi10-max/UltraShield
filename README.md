@@ -137,13 +137,9 @@ VirusTotal is enabled — that's expected, not a bug).
   node_modules, bin, obj)
 - No unit tests
 - The app name is currently "UltraShield" — a working name, can change
-- Installer script and GitHub Actions release workflow (same pattern as
-  Video Editor, tag e.g. shield-v*)
 - Firewall module (Outpost Firewall-style: per-app connection control,
   live connection visibility, prompt-on-new-connection) — planned, not
   started yet
-- I couldn't compile it locally (no .NET SDK/Windows in this environment) —
-  try a build in Visual Studio and let me know what (if anything) breaks
 
 ## Building a release
 
