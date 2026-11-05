@@ -137,23 +137,27 @@ VirusTotal is enabled — that's expected, not a bug).
   node_modules, bin, obj)
 - No unit tests
 - The app name is currently "UltraShield" — a working name, can change
+- Installer script and GitHub Actions release workflow (same pattern as
+  Video Editor, tag e.g. shield-v*)
 - Firewall module (Outpost Firewall-style: per-app connection control,
   live connection visibility, prompt-on-new-connection) — planned, not
   started yet
+- I couldn't compile it locally (no .NET SDK/Windows in this environment) —
+  try a build in Visual Studio and let me know what (if anything) breaks
 
-## Building a release
+## Language
 
-1. In Visual Studio: **Build > Rebuild** in the **Release** configuration
-   (not Debug — Debug is unoptimized and carries extra debug symbols).
-2. To build the installer locally: install [Inno Setup 6](https://jrsoftware.org/isinfo.php),
-   then compile `installer/UltraShield.iss` (adjust `MyAppSourceDir` at the
-   top of the file if your build output path differs).
-3. To publish an actual GitHub release: push a tag matching `shield-v*`
-   (e.g. `shield-v1.0.0`) — the GitHub Actions workflow in
-   `.github/workflows/build-release-shield.yml` builds, compiles the
-   installer, and creates the release automatically. A tag containing
-   `alpha` or `beta` (e.g. `shield-v1.0.0-beta`) is marked as a
-   pre-release automatically.
+The app is available in **English** and **Serbian** (Latin script). The **Srpski / English** button in the header, next to About, switches the whole interface instantly, no restart needed, and the choice is remembered (`%LOCALAPPDATA%\UltraShield\language.txt`). Until you choose, the app follows the Windows display language: Serbian on a Serbian Windows, English otherwise. The "How to support" guide follows the same choice. Your checklist progress is kept when you switch.
+
+## Supporting the project
+
+UltraShield is free and will stay free. If you'd like to support its development:
+
+- **By card on [Ko-fi](https://ko-fi.com/ultracreativesuite)** — no account needed: type an amount, press *Donate* and pay with a Visa or Mastercard (credit or debit) or PayPal. The easiest way from abroad.
+- **[GitHub Sponsors](https://github.com/sponsors/demirajvazi10-max)** — monthly or one-time, paid with an ordinary payment card (no PayPal needed); needs a free GitHub account.
+- **Bank transfer from Serbia** — recipient Demir Ajvazi, account `265-0000006185877-28`, Raiffeisen banka, purpose *Donacija za Ultra programe*. Meant for domestic transfers; from abroad, Ko-fi costs far less in fees.
+
+The same guide is inside the app: **About > How to support**, in English and Serbian, with buttons to open Ko-fi or GitHub Sponsors and to copy the account number.
 
 ## Author
 

@@ -17,6 +17,10 @@ namespace UltraShield
 
             Directory.CreateDirectory(Path.GetDirectoryName(LogPath)!);
 
+            // Every window (main, About, support guide) is translated to the chosen language as it opens.
+            EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent,
+                new RoutedEventHandler((s, _) => L.Apply((DependencyObject)s)));
+
             // Global exception handlers, same pattern as Ultra Video Editor:
             // never let an unhandled exception silently crash without a trace.
             DispatcherUnhandledException += OnDispatcherUnhandledException;
@@ -27,8 +31,8 @@ namespace UltraShield
         {
             LogError(e.Exception);
             MessageBox.Show(
-                "An unexpected error occurred and has been logged. UltraShield will try to continue running.",
-                "UltraShield - Error",
+                L.T("An unexpected error occurred and has been logged. UltraShield will try to continue running."),
+                L.T("UltraShield - Error"),
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
             e.Handled = true;

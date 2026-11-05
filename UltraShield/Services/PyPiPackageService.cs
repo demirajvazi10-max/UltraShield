@@ -22,7 +22,7 @@ namespace UltraShield.Services
             {
                 result.ExistsInRegistry = true;
                 result.Verdict = ScanVerdict.Malicious;
-                result.Warnings.Add($"Matches known-malicious package list: {reference}");
+                result.Warnings.Add(L.F("Matches known-malicious package list: {0}", reference));
                 return result;
             }
 
@@ -33,7 +33,7 @@ namespace UltraShield.Services
                 {
                     result.ExistsInRegistry = false;
                     result.Verdict = ScanVerdict.Unknown;
-                    result.Notes.Add("Package not found on PyPI.");
+                    result.Notes.Add(L.T("Package not found on PyPI."));
                     return result;
                 }
 
@@ -45,7 +45,7 @@ namespace UltraShield.Services
                 var hasProjectUrls = info.TryGetProperty("project_urls", out var pu) && pu.ValueKind == JsonValueKind.Object;
                 if (!hasHomepage && !hasProjectUrls)
                 {
-                    result.Warnings.Add("No homepage or project URLs in package metadata.");
+                    result.Warnings.Add(L.T("No homepage or project URLs in package metadata."));
                 }
 
                 if (doc.RootElement.TryGetProperty("releases", out var releases))
@@ -54,17 +54,17 @@ namespace UltraShield.Services
                     foreach (var _ in releases.EnumerateObject()) releaseCount++;
                     if (releaseCount <= 1)
                     {
-                        result.Warnings.Add("Package has only a single published release.");
+                        result.Warnings.Add(L.T("Package has only a single published release."));
                     }
                 }
 
                 result.Verdict = result.Warnings.Count > 0 ? ScanVerdict.Suspicious : ScanVerdict.Clean;
-                result.Notes.Add("Heuristic checks only - this does not scan the package's actual code.");
+                result.Notes.Add(L.T("Heuristic checks only - this does not scan the package's actual code."));
             }
             catch (Exception ex)
             {
                 result.Verdict = ScanVerdict.Error;
-                result.Notes.Add($"Lookup failed: {ex.Message}");
+                result.Notes.Add(L.F("Lookup failed: {0}", ex.Message));
             }
 
             return result;

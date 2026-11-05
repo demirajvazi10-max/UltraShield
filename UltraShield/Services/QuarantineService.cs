@@ -53,7 +53,7 @@ namespace UltraShield.Services
         public async Task RestoreAsync(QuarantinedFile entry)
         {
             if (!File.Exists(entry.QuarantinePath))
-                throw new FileNotFoundException("Quarantined file no longer exists.", entry.QuarantinePath);
+                throw new FileNotFoundException(L.T("Quarantined file no longer exists."), entry.QuarantinePath);
 
             Directory.CreateDirectory(Path.GetDirectoryName(entry.OriginalPath)!);
             File.Move(entry.QuarantinePath, entry.OriginalPath, overwrite: false);

@@ -13,11 +13,11 @@ namespace UltraShield.Modules.Scanner
         public string Hash => _finding.Hash;
         public ScanVerdict Verdict => _finding.Verdict;
         public string Summary =>
-            $"{Verdict} - {_finding.FilePath}" +
+            $"{L.T(Verdict.ToString())} - {_finding.FilePath}" +
             (_finding.ThreatLabel != null ? $" ({_finding.ThreatLabel})" : "") +
             $" [{_finding.Source}]";
 
-        private string _status = "Not quarantined";
+        private string _status = L.T("Not quarantined");
         public string Status
         {
             get => _status;
@@ -52,11 +52,11 @@ namespace UltraShield.Modules.Scanner
             {
                 await _quarantineService.QuarantineAsync(_finding.FilePath, $"{Verdict}: {_finding.ThreatLabel ?? _finding.Source}");
                 IsQuarantined = true;
-                Status = "Quarantined";
+                Status = L.T("Quarantined");
             }
             catch (Exception ex)
             {
-                Status = $"Quarantine failed: {ex.Message}";
+                Status = L.F("Quarantine failed: {0}", ex.Message);
             }
         }
     }

@@ -7,7 +7,10 @@ namespace UltraShield
         public MainWindow()
         {
             InitializeComponent();
+            L.UpdateLanguageButton(LanguageButton);
         }
+
+        private void LanguageButton_Click(object sender, RoutedEventArgs e) => L.Toggle(LanguageButton);
 
         private void AboutButton_Click(object sender, RoutedEventArgs e)
         {

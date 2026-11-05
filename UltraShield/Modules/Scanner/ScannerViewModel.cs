@@ -85,7 +85,7 @@ namespace UltraShield.Modules.Scanner
 
         // ----- Single-item scan result -----
 
-        private string _resultText = "No scan run yet.";
+        private string _resultText = L.T("No scan run yet.");
         public string ResultText
         {
             get => _resultText;
@@ -154,14 +154,14 @@ namespace UltraShield.Modules.Scanner
         {
             _settings.VirusTotalApiKey = PendingApiKey;
             await _settingsService.SaveAsync(_settings);
-            ResultText = "VirusTotal API key saved locally.";
+            ResultText = L.T("VirusTotal API key saved locally.");
         }
 
         private void Browse()
         {
             if (IsFolderMode)
             {
-                var dialog = new OpenFolderDialog { Title = "Select a folder to scan" };
+                var dialog = new OpenFolderDialog { Title = L.T("Select a folder to scan") };
                 if (dialog.ShowDialog() == true)
                 {
                     Target = dialog.FolderName;
@@ -169,7 +169,7 @@ namespace UltraShield.Modules.Scanner
             }
             else
             {
-                var dialog = new OpenFileDialog { Title = "Select a file to check" };
+                var dialog = new OpenFileDialog { Title = L.T("Select a file to check") };
                 if (dialog.ShowDialog() == true)
                 {
                     Target = dialog.FileName;
@@ -183,11 +183,11 @@ namespace UltraShield.Modules.Scanner
         {
             if (string.IsNullOrWhiteSpace(Target))
             {
-                ResultText = "Enter a package name or file path first.";
+                ResultText = L.T("Enter a package name or file path first.");
                 return;
             }
 
-            ResultText = "Scanning...";
+            ResultText = L.T("Scanning...");
 
             try
             {
@@ -208,7 +208,7 @@ namespace UltraShield.Modules.Scanner
             }
             catch (Exception ex)
             {
-                ResultText = $"Scan failed: {ex.Message}";
+                ResultText = L.F("Scan failed: {0}", ex.Message);
             }
         }
 
@@ -216,7 +216,7 @@ namespace UltraShield.Modules.Scanner
         {
             if (!File.Exists(path))
             {
-                ResultText = "That file path doesn't exist.";
+                ResultText = L.T("That file path doesn't exist.");
                 return;
             }
 
@@ -238,7 +238,7 @@ namespace UltraShield.Modules.Scanner
             else
             {
                 ResultText = FormatHashResult(hash, mbResult) +
-                    "\n\nAdd a VirusTotal API key below for a second opinion from ~70 antivirus engines.";
+                    "\n\n" + L.T("Add a VirusTotal API key below for a second opinion from ~70 antivirus engines.");
             }
         }
 
@@ -248,20 +248,20 @@ namespace UltraShield.Modules.Scanner
         {
             if (string.IsNullOrWhiteSpace(Target) || !Directory.Exists(Target))
             {
-                FolderScanStatus = "Choose a valid folder first.";
+                FolderScanStatus = L.T("Choose a valid folder first.");
                 return;
             }
 
             Findings.Clear();
             IsScanning = true;
             FolderScanPercent = 0;
-            FolderScanStatus = "Starting scan...";
+            FolderScanStatus = L.T("Starting scan...");
             _scanCts = new CancellationTokenSource();
 
             var progress = new Progress<FolderScanProgress>(p =>
             {
                 FolderScanPercent = p.TotalFiles > 0 ? (double)p.FilesScanned / p.TotalFiles * 100 : 0;
-                FolderScanStatus = $"Scanned {p.FilesScanned} of {p.TotalFiles} files - {p.ThreatsFound} threat(s) found so far. Checking: {Path.GetFileName(p.CurrentFile)}";
+                FolderScanStatus = L.F("Scanned {0} of {1} files - {2} threat(s) found so far. Checking: {3}", p.FilesScanned, p.TotalFiles, p.ThreatsFound, Path.GetFileName(p.CurrentFile));
             });
 
             try
@@ -278,16 +278,16 @@ namespace UltraShield.Modules.Scanner
                 }
 
                 FolderScanStatus = results.Count == 0
-                    ? "Scan complete - no threats found."
-                    : $"Scan complete - {results.Count} threat(s) found. Review the list below.";
+                    ? L.T("Scan complete - no threats found.")
+                    : L.F("Scan complete - {0} threat(s) found. Review the list below.", results.Count);
             }
             catch (OperationCanceledException)
             {
-                FolderScanStatus = "Scan cancelled.";
+                FolderScanStatus = L.T("Scan cancelled.");
             }
             catch (Exception ex)
             {
-                FolderScanStatus = $"Scan failed: {ex.Message}";
+                FolderScanStatus = L.F("Scan failed: {0}", ex.Message);
             }
             finally
             {
@@ -302,10 +302,10 @@ namespace UltraShield.Modules.Scanner
         {
             var lines = new List<string>
             {
-                $"{r.Ecosystem} package '{r.PackageName}': {r.Verdict}",
-                r.ExistsInRegistry ? "Found in the registry." : "Not found in the registry."
+                L.F("{0} package '{1}': {2}", r.Ecosystem, r.PackageName, L.T(r.Verdict.ToString())),
+                r.ExistsInRegistry ? L.T("Found in the registry.") : L.T("Not found in the registry.")
             };
-            lines.AddRange(r.Warnings.Select(w => $"Warning: {w}"));
+            lines.AddRange(r.Warnings.Select(w => L.F("Warning: {0}", w)));
             lines.AddRange(r.Notes);
             return string.Join(Environment.NewLine, lines);
         }
@@ -314,11 +314,11 @@ namespace UltraShield.Modules.Scanner
         {
             var lines = new List<string>
             {
-                $"[{r.Source}] SHA-256 {hash}: {r.Verdict}"
+                $"[{r.Source}] SHA-256 {hash}: {L.T(r.Verdict.ToString())}"
             };
-            if (r.ThreatLabel != null) lines.Add($"Threat label: {r.ThreatLabel}");
+            if (r.ThreatLabel != null) lines.Add(L.F("Threat label: {0}", r.ThreatLabel));
             if (r.DetectionCount != null && r.TotalEngines != null)
-                lines.Add($"Detections: {r.DetectionCount}/{r.TotalEngines}");
+                lines.Add(L.F("Detections: {0}/{1}", r.DetectionCount, r.TotalEngines));
             lines.AddRange(r.Notes);
             return string.Join(Environment.NewLine, lines);
         }

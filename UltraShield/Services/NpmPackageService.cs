@@ -23,7 +23,7 @@ namespace UltraShield.Services
             {
                 result.ExistsInRegistry = true;
                 result.Verdict = ScanVerdict.Malicious;
-                result.Warnings.Add($"Matches known-malicious package list: {reference}");
+                result.Warnings.Add(L.F("Matches known-malicious package list: {0}", reference));
                 return result;
             }
 
@@ -35,7 +35,7 @@ namespace UltraShield.Services
                 {
                     result.ExistsInRegistry = false;
                     result.Verdict = ScanVerdict.Unknown;
-                    result.Notes.Add("Package not found in the npm registry.");
+                    result.Notes.Add(L.T("Package not found in the npm registry."));
                     return result;
                 }
 
@@ -47,7 +47,7 @@ namespace UltraShield.Services
                 // they're signals worth a human looking closer at.
                 if (!root.TryGetProperty("repository", out _))
                 {
-                    result.Warnings.Add("No repository field in package metadata.");
+                    result.Warnings.Add(L.T("No repository field in package metadata."));
                 }
 
                 if (root.TryGetProperty("time", out var time) && time.TryGetProperty("created", out var created))
@@ -57,7 +57,7 @@ namespace UltraShield.Services
                         var age = DateTime.UtcNow - createdDate;
                         if (age.TotalDays < 14)
                         {
-                            result.Warnings.Add($"Package was first published only {(int)age.TotalDays} day(s) ago.");
+                            result.Warnings.Add(L.F("Package was first published only {0} day(s) ago.", (int)age.TotalDays));
                         }
                     }
                 }
@@ -68,17 +68,17 @@ namespace UltraShield.Services
                     foreach (var _ in versions.EnumerateObject()) versionCount++;
                     if (versionCount <= 1)
                     {
-                        result.Warnings.Add("Package has only a single published version.");
+                        result.Warnings.Add(L.T("Package has only a single published version."));
                     }
                 }
 
                 result.Verdict = result.Warnings.Count > 0 ? ScanVerdict.Suspicious : ScanVerdict.Clean;
-                result.Notes.Add("Heuristic checks only - this does not scan the package's actual code.");
+                result.Notes.Add(L.T("Heuristic checks only - this does not scan the package's actual code."));
             }
             catch (Exception ex)
             {
                 result.Verdict = ScanVerdict.Error;
-                result.Notes.Add($"Lookup failed: {ex.Message}");
+                result.Notes.Add(L.F("Lookup failed: {0}", ex.Message));
             }
 
             return result;

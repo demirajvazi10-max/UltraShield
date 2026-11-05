@@ -8,7 +8,13 @@ namespace UltraShield.Modules.Checklist
 {
     public class ChecklistItem : ViewModelBase
     {
-        public string Title { get; set; } = "";
+        /// <summary>English text - also the key the done/not-done state is saved under, so it survives a language switch.</summary>
+        public string Key { get; set; } = "";
+
+        /// <summary>What is shown and read: the key in the current language.</summary>
+        public string Title => L.T(Key);
+
+        public void RefreshLanguage() => OnPropertyChanged(nameof(Title));
 
         private bool _isDone;
         public bool IsDone
@@ -25,16 +31,16 @@ namespace UltraShield.Modules.Checklist
 
         public ObservableCollection<ChecklistItem> Items { get; } = new()
         {
-            new ChecklistItem { Title = "2FA enabled on primary email" },
-            new ChecklistItem { Title = "2FA enabled on GitHub / package registry accounts" },
-            new ChecklistItem { Title = "Dependencies audited for known-malicious packages" },
-            new ChecklistItem { Title = "Recent, tested backups exist" },
-            new ChecklistItem { Title = "No plaintext credentials in repos or scripts" },
-            new ChecklistItem { Title = "Verified recruiter/job offers through an official company channel before running any code they sent" },
-            new ChecklistItem { Title = "Browser extensions reviewed - none installed from outside the official store" },
+            new ChecklistItem { Key = "2FA enabled on primary email" },
+            new ChecklistItem { Key = "2FA enabled on GitHub / package registry accounts" },
+            new ChecklistItem { Key = "Dependencies audited for known-malicious packages" },
+            new ChecklistItem { Key = "Recent, tested backups exist" },
+            new ChecklistItem { Key = "No plaintext credentials in repos or scripts" },
+            new ChecklistItem { Key = "Verified recruiter/job offers through an official company channel before running any code they sent" },
+            new ChecklistItem { Key = "Browser extensions reviewed - none installed from outside the official store" },
         };
 
-        public string ProgressText => $"{Items.Count(i => i.IsDone)} of {Items.Count} completed";
+        public string ProgressText => L.F("{0} of {1} completed", Items.Count(i => i.IsDone), Items.Count);
 
         public ChecklistViewModel()
         {
@@ -42,6 +48,12 @@ namespace UltraShield.Modules.Checklist
             {
                 item.PropertyChanged += OnItemChanged;
             }
+
+            L.Changed += () =>
+            {
+                foreach (var item in Items) item.RefreshLanguage();
+                OnPropertyChanged(nameof(ProgressText));
+            };
 
             _ = LoadStateAsync();
         }
@@ -51,7 +63,7 @@ namespace UltraShield.Modules.Checklist
             var saved = await _persistence.LoadAsync();
             foreach (var item in Items)
             {
-                if (saved.TryGetValue(item.Title, out var done))
+                if (saved.TryGetValue(item.Key, out var done))
                 {
                     item.IsDone = done;
                 }
@@ -73,7 +85,7 @@ namespace UltraShield.Modules.Checklist
 
         private async System.Threading.Tasks.Task SaveStateAsync()
         {
-            var state = Items.ToDictionary(i => i.Title, i => i.IsDone);
+            var state = Items.ToDictionary(i => i.Key, i => i.IsDone);
             await _persistence.SaveAsync(state);
         }
     }

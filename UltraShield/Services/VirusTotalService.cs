@@ -28,7 +28,7 @@ namespace UltraShield.Services
             if (string.IsNullOrWhiteSpace(apiKey))
             {
                 result.Verdict = ScanVerdict.Unknown;
-                result.Notes.Add("No VirusTotal API key configured - add your own free key in Settings to enable this check.");
+                result.Notes.Add(L.T("No VirusTotal API key configured - add your own free key in Settings to enable this check."));
                 return result;
             }
 
@@ -42,14 +42,14 @@ namespace UltraShield.Services
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     result.Verdict = ScanVerdict.Unknown;
-                    result.Notes.Add("Not present in VirusTotal's database.");
+                    result.Notes.Add(L.T("Not present in VirusTotal's database."));
                     return result;
                 }
 
                 if (!response.IsSuccessStatusCode)
                 {
                     result.Verdict = ScanVerdict.Error;
-                    result.Notes.Add($"VirusTotal returned status {(int)response.StatusCode}.");
+                    result.Notes.Add(L.F("VirusTotal returned status {0}.", (int)response.StatusCode));
                     return result;
                 }
 
@@ -68,12 +68,12 @@ namespace UltraShield.Services
                 result.Verdict = malicious > 0 ? ScanVerdict.Malicious
                                 : suspicious > 0 ? ScanVerdict.Suspicious
                                 : ScanVerdict.Clean;
-                result.Notes.Add($"{malicious + suspicious} of {total} engines flagged this file.");
+                result.Notes.Add(L.F("{0} of {1} engines flagged this file.", malicious + suspicious, total));
             }
             catch (Exception ex)
             {
                 result.Verdict = ScanVerdict.Error;
-                result.Notes.Add($"Lookup failed: {ex.Message}");
+                result.Notes.Add(L.F("Lookup failed: {0}", ex.Message));
             }
 
             return result;

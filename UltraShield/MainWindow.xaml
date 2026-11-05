@@ -40,9 +40,11 @@
                                    Style="{StaticResource TaglineTextStyle}"/>
                     </StackPanel>
                 </StackPanel>
-                <Button Content="About" Click="AboutButton_Click"
-                        HorizontalAlignment="Right" VerticalAlignment="Center"
-                        AutomationProperties.Name="About UltraShield"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button x:Name="LanguageButton" Click="LanguageButton_Click" Margin="0,0,8,0"/>
+                    <Button Content="About" Click="AboutButton_Click"
+                            AutomationProperties.Name="About UltraShield"/>
+                </StackPanel>
             </Grid>
         </Border>
 

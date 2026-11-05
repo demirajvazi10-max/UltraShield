@@ -3,10 +3,21 @@ using UltraShield.Core;
 
 namespace UltraShield.Modules.Education
 {
-    public class ThreatTopic
+    public class ThreatTopic : ViewModelBase
     {
-        public string Title { get; set; } = "";
-        public string Body { get; set; } = "";
+        public string TitleEn { get; set; } = "";
+        public string BodyEn { get; set; } = "";
+        /// <summary>Key of the Serbian body text in Loc.cs.</summary>
+        public string BodyKey { get; set; } = "";
+
+        public string Title => L.T(TitleEn);
+        public string Body => L.Serbian ? L.T(BodyKey) : BodyEn;
+
+        public void RefreshLanguage()
+        {
+            OnPropertyChanged(nameof(Title));
+            OnPropertyChanged(nameof(Body));
+        }
     }
 
     public class EducationViewModel : ViewModelBase
@@ -15,8 +26,9 @@ namespace UltraShield.Modules.Education
         {
             new ThreatTopic
             {
-                Title = "Fake recruiter / job offer scams",
-                Body = "State-linked groups such as Lazarus commonly open contact through LinkedIn, " +
+                BodyKey = "EDU_RECRUITER",
+                TitleEn = "Fake recruiter / job offer scams",
+                BodyEn = "State-linked groups such as Lazarus commonly open contact through LinkedIn, " +
                        "Discord, or email, posing as a recruiter for a blockchain, fintech, or AI " +
                        "startup. After some friendly back-and-forth, the target is asked to complete " +
                        "a 'coding test' or 'demo project' - usually a small repository to clone and " +
@@ -29,8 +41,9 @@ namespace UltraShield.Modules.Education
             },
             new ThreatTopic
             {
-                Title = "Trojanized npm / PyPI packages",
-                Body = "This has become one of the most active attack paths against developers. " +
+                BodyKey = "EDU_PACKAGES",
+                TitleEn = "Trojanized npm / PyPI packages",
+                BodyEn = "This has become one of the most active attack paths against developers. " +
                        "Tactics documented through 2026 include: publishing packages with names close " +
                        "to popular, trusted tools ('brandjacking' - e.g. a fake polyfill or utility " +
                        "package that sounds like something you'd install without thinking twice); " +
@@ -43,8 +56,9 @@ namespace UltraShield.Modules.Education
             },
             new ThreatTopic
             {
-                Title = "Fake crypto exchanges and wallets",
-                Body = "Lookalike domains and cloned exchange or wallet interfaces are used to " +
+                BodyKey = "EDU_CRYPTO",
+                TitleEn = "Fake crypto exchanges and wallets",
+                BodyEn = "Lookalike domains and cloned exchange or wallet interfaces are used to " +
                        "harvest login credentials, seed phrases, or private keys directly. Malware " +
                        "delivered through the two threats above is also frequently built specifically " +
                        "to scan a victim's machine for wallet files (MetaMask, Exodus, Atomic, etc.) " +
@@ -54,8 +68,9 @@ namespace UltraShield.Modules.Education
             },
             new ThreatTopic
             {
-                Title = "Fake IT worker / video call scams",
-                Body = "A related but distinct scheme: operatives pose as remote job applicants or " +
+                BodyKey = "EDU_ITWORKER",
+                TitleEn = "Fake IT worker / video call scams",
+                BodyEn = "A related but distinct scheme: operatives pose as remote job applicants or " +
                        "contractors (sometimes using deepfaked video/audio or stolen identities) to get " +
                        "hired into real companies for a paycheck, or to gain insider access to internal " +
                        "systems and codebases. Separately, deepfaked video calls impersonating " +
@@ -66,8 +81,9 @@ namespace UltraShield.Modules.Education
             },
             new ThreatTopic
             {
-                Title = "Malicious browser extensions",
-                Body = "Fake or trojanized browser extensions (sometimes distributed outside official " +
+                BodyKey = "EDU_EXTENSIONS",
+                TitleEn = "Malicious browser extensions",
+                BodyEn = "Fake or trojanized browser extensions (sometimes distributed outside official " +
                        "stores, sometimes slipping through official review) have been used to inject " +
                        "payloads, intercept clipboard content, or silently modify crypto transactions " +
                        "in the browser.\n\nWhat to do: only install extensions from the official store, " +
@@ -85,6 +101,7 @@ namespace UltraShield.Modules.Education
 
         public EducationViewModel()
         {
+            L.Changed += () => { foreach (var t in Topics) t.RefreshLanguage(); };
             SelectedTopic = Topics.Count > 0 ? Topics[0] : null;
         }
     }
